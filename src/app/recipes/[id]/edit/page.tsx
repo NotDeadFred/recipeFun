@@ -1,0 +1,32 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
+import { useApp } from "@/components/AppProvider";
+import { RecipeForm } from "@/components/recipe/RecipeForm";
+import { useAsync } from "@/lib/hooks";
+
+export default function EditRecipePage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { bfcacheId } = router;
+  const { repo } = useApp();
+  const { data: recipe, loading } = useAsync(() => repo.getRecipe(id), [repo, id]);
+
+  if (loading) return <p className="page text-muted">Loading…</p>;
+  if (!recipe) return <p className="page">Recipe not found.</p>;
+
+  return (
+    <div className="page max-w-4xl">
+      <h1 className="page-title mb-6">Edit recipe</h1>
+      <RecipeForm
+        key={`${bfcacheId}-${recipe.updatedAt}`}
+        initial={recipe}
+        onCancel={() => router.back()}
+        onSubmit={async (draft) => {
+          const saved = await repo.saveRecipe({ ...recipe, ...draft, id: recipe.id });
+          router.push(`/recipes/${saved.id}`);
+        }}
+      />
+    </div>
+  );
+}

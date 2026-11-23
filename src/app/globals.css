@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbf7f2;
+  --surface: #ffffff;
+  --surface-2: #f3ece3;
+  --foreground: #2b2118;
+  --muted: #7a6a5c;
+  --border: #e6dbcf;
+  --brand: #c2410c;
+  --brand-strong: #9a3412;
+  --brand-soft: #ffedd5;
+  --highlight: #fef3c7;
+  --highlight-ring: #f59e0b;
+  --success: #15803d;
+  --danger: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #17120e;
+    --surface: #221b15;
+    --surface-2: #2c231c;
+    --foreground: #f5ede4;
+    --muted: #b3a294;
+    --border: #3d3229;
+    --brand: #fb923c;
+    --brand-strong: #fdba74;
+    --brand-soft: #431407;
+    --highlight: #3b2a0a;
+    --highlight-ring: #f59e0b;
+    --success: #4ade80;
+    --danger: #f87171;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-highlight: var(--highlight);
+  --color-highlight-ring: var(--highlight-ring);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-border bg-surface shadow-sm;
+  }
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 font-medium transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2 font-semibold text-white transition-colors hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2 font-medium text-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-brand;
+  }
+  .field {
+    @apply flex flex-col gap-1 text-sm font-medium;
+  }
+  .field input,
+  .field textarea,
+  .field select,
+  .input {
+    @apply min-h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-base font-normal text-foreground placeholder:text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30;
+  }
+  .chip {
+    @apply inline-flex min-h-9 items-center gap-1 rounded-full border border-border bg-surface px-3 text-sm;
+  }
+  .chip[aria-pressed="true"] {
+    @apply border-brand bg-brand-soft font-semibold text-brand-strong;
+  }
+  .page {
+    @apply mx-auto w-full max-w-6xl px-4 py-6 sm:px-6;
+  }
+  .page-title {
+    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+  }
+}
+
+/* Safe areas for the installed iPad/iPhone app. */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
