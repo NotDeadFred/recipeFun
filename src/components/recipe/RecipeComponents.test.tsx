@@ -21,7 +21,7 @@ describe("RecipeView", () => {
   it("shows ingredients and steps side by side", () => {
     render(<ViewHarness />);
     expect(screen.getByRole("heading", { name: "Ingredients" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /steps/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Directions" })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem").length).toBeGreaterThan(4);
   });
 

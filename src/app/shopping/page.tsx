@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { useAsync } from "@/lib/hooks";
 import { clearChecked, toggleItem } from "@/lib/shoppingList";
 import { parseIngredientLine } from "@/lib/ingredients";
@@ -9,7 +9,7 @@ import { formatQuantity, formatUnit } from "@/lib/scaling";
 import { newId } from "@/lib/ids";
 import type { ShoppingItem } from "@/lib/types";
 
-export default function ShoppingPage() {
+function ShoppingPage() {
   const { repo } = useApp();
   const { data: items, setData } = useAsync(() => repo.getShoppingList(), [repo]);
   const [newItem, setNewItem] = useState("");
@@ -78,3 +78,5 @@ export default function ShoppingPage() {
     </div>
   );
 }
+
+export default withApp(ShoppingPage);

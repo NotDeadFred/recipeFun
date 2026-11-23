@@ -133,7 +133,7 @@ test.describe("importing", () => {
     const preview = page.getByTestId("draft-preview");
     await expect(preview.getByRole("heading", { level: 1 })).toHaveText("Best Banana Bread");
     await expect(preview).toContainText("8 servings");
-    await expect(preview).toContainText("Total 1 hr 10 min");
+    await expect(preview.locator("dl")).toContainText(/Total\s*1 hr 10 min/i);
     await preview.getByRole("button", { name: "Save to my recipes" }).click();
     await expect(page).toHaveURL(/\/recipes\/[^/]+$/);
     await page.goto("/");

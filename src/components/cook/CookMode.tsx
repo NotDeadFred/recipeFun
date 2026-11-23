@@ -161,7 +161,7 @@ export function CookMode({ recipe, servings = recipe.servings, unitSystem = null
   const stepTimer = step ? timers.find((t) => t.id === step.id) : undefined;
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background" data-testid="cook-mode">
+    <div className="fixed inset-0 z-40 flex flex-col bg-background" data-testid="cook-mode">
       {/* Top bar */}
       <header className="border-b border-border bg-surface px-3 pt-[env(safe-area-inset-top)]">
         <div className="flex min-h-14 items-center gap-2">
@@ -244,7 +244,7 @@ export function CookMode({ recipe, servings = recipe.servings, unitSystem = null
                   <button
                     onClick={() => dispatch({ type: "goto", index: i })}
                     className={[
-                      "flex w-full gap-4 rounded-2xl border p-4 text-left transition-all",
+                      "flex w-full gap-4 rounded-md border p-4 text-left transition-all",
                       current
                         ? "border-highlight-ring bg-highlight text-xl leading-relaxed shadow-md ring-2 ring-highlight-ring sm:text-2xl"
                         : "border-border bg-surface text-base",
@@ -282,7 +282,7 @@ export function CookMode({ recipe, servings = recipe.servings, unitSystem = null
 
       {/* Running timers */}
       {timers.length > 0 && (
-        <div className="pointer-events-none fixed right-3 bottom-24 z-40 flex flex-col items-end gap-2">
+        <div className="pointer-events-none fixed right-3 bottom-24 z-[45] flex flex-col items-end gap-2">
           {timers.map((t) => {
             const left = timerRemaining(t, now);
             return (

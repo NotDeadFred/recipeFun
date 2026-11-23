@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { RecipeForm } from "@/components/recipe/RecipeForm";
 import { usePhotoUpload } from "@/components/recipe/usePhotoUpload";
 import { takePendingDraft } from "@/lib/draftStore";
 
-export default function NewRecipePage() {
+function NewRecipePage() {
   // Pages stay mounted between visits; start a fresh form on each new visit.
   const { bfcacheId } = useRouter();
   return <NewRecipe key={bfcacheId} />;
@@ -38,3 +38,5 @@ function NewRecipe() {
     </div>
   );
 }
+
+export default withApp(NewRecipePage);

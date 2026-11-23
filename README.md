@@ -22,6 +22,7 @@ A recipe and cooking app for the web and iPad. Collect recipes from your favorit
 - **Profiles, groups and shared cookbooks**: create a group, share its invite code, and share cookbooks with the group so everyone can cook from them.
 - **Shopping list** built from recipes, with smart merging (1 cup + 8 tbsp milk → 1½ cups).
 - **Installable on iPad** (Add to Home Screen) with offline access to pages you've opened.
+- **Light and dark themes**: light by default; switch with the sun/moon button in the header or under Profile → Appearance. Your choice is remembered on each device.
 
 ## Quick start
 

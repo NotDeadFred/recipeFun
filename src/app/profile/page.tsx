@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import type { UnitSystem } from "@/lib/types";
+import { ThemeChooser } from "@/components/ThemeToggle";
 
-export default function ProfilePage() {
+function ProfilePage() {
   const { repo, profile, refreshProfile, mode, signOut, claudeEnabled } = useApp();
   const [displayName, setDisplayName] = useState(profile.displayName);
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(profile.unitSystem);
@@ -38,6 +39,14 @@ export default function ProfilePage() {
         <button className="btn-primary">{saved ? "Saved ✓" : "Save"}</button>
       </form>
 
+      <section className="card mt-6 space-y-3 p-5" aria-labelledby="appearance-heading">
+        <h2 id="appearance-heading" className="text-base font-bold">
+          Appearance
+        </h2>
+        <ThemeChooser />
+        <p className="text-xs text-muted">Saved on this device. Dark mode is easier on the eyes in a dim kitchen.</p>
+      </section>
+
       <div className="card mt-6 space-y-2 p-5 text-sm">
         <h2 className="text-base font-semibold">This app</h2>
         <p>
@@ -57,3 +66,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+export default withApp(ProfilePage);

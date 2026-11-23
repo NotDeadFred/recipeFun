@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { useAsync } from "@/lib/hooks";
 import { buildSearchUrl } from "@/lib/sites";
 
-export default function DiscoverPage() {
+function DiscoverPage() {
   const { repo } = useApp();
   const { data: sites, reload } = useAsync(() => repo.listSites(), [repo]);
   const [query, setQuery] = useState("");
@@ -104,3 +104,5 @@ export default function DiscoverPage() {
     </div>
   );
 }
+
+export default withApp(DiscoverPage);

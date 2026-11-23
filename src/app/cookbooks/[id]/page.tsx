@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { RecipeCard } from "@/components/recipe/RecipeCard";
 import { useAsync } from "@/lib/hooks";
 
-export default function CookbookPage() {
+function CookbookPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { repo, profile } = useApp();
@@ -84,3 +84,5 @@ export default function CookbookPage() {
     </div>
   );
 }
+
+export default withApp(CookbookPage);

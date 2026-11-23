@@ -37,7 +37,7 @@ export function UnitToggle({
     ["metric", "Metric"],
   ];
   return (
-    <div className="flex gap-1 rounded-xl bg-surface-2 p-1" role="group" aria-label="Units">
+    <div className="flex gap-1 rounded-md bg-surface-2 p-1" role="group" aria-label="Units">
       {options.map(([v, label]) => (
         <button
           key={label}

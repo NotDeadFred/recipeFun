@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { DraftPreview } from "@/components/recipe/DraftPreview";
 import type { RecipeDraft } from "@/lib/types";
 
@@ -71,7 +71,7 @@ function ImportInner() {
         .
       </p>
 
-      <div className="mt-6 flex gap-1 rounded-xl bg-surface-2 p-1 sm:w-fit" role="tablist">
+      <div className="mt-6 flex gap-1 rounded-md bg-surface-2 p-1 sm:w-fit" role="tablist">
         {(
           [
             ["link", "From a link"],
@@ -130,7 +130,7 @@ function ImportInner() {
       )}
 
       {error && (
-        <p className="mt-4 rounded-xl bg-danger/10 p-3 text-danger" role="alert">
+        <p className="mt-4 rounded-md bg-danger/10 p-3 text-danger" role="alert">
           {error}
         </p>
       )}
@@ -173,10 +173,12 @@ function KeyedImport() {
   return <ImportInner key={bfcacheId} />;
 }
 
-export default function ImportPage() {
+function ImportPage() {
   return (
     <Suspense fallback={<p className="page text-muted">Loading…</p>}>
       <KeyedImport />
     </Suspense>
   );
 }
+
+export default withApp(ImportPage);

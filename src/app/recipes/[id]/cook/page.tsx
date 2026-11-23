@@ -2,7 +2,7 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { CookMode } from "@/components/cook/CookMode";
 import { useAsync } from "@/lib/hooks";
 import type { UnitSystem } from "@/lib/types";
@@ -25,10 +25,12 @@ function CookPageInner() {
   return <CookMode key={bfcacheId} recipe={recipe} servings={servings} unitSystem={unitSystem} exitHref={`/recipes/${recipe.id}`} />;
 }
 
-export default function CookPage() {
+function CookPage() {
   return (
     <Suspense fallback={<p className="page text-muted">Loading…</p>}>
       <CookPageInner />
     </Suspense>
   );
 }
+
+export default withApp(CookPage);

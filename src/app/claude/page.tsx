@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { ClaudeRequestForm, type ClaudeFormValues } from "@/components/claude/ClaudeRequestForm";
 import { DraftPreview } from "@/components/recipe/DraftPreview";
 import type { RecipeDraft } from "@/lib/types";
 
-export default function ClaudePage() {
+function ClaudePage() {
   const { bfcacheId } = useRouter();
   return <ClaudeContent key={bfcacheId} />;
 }
@@ -43,7 +43,7 @@ function ClaudeContent() {
       </p>
 
       {!claudeEnabled && (
-        <p className="mt-4 rounded-xl bg-highlight p-3 text-sm" role="status">
+        <p className="mt-4 rounded-md bg-highlight p-3 text-sm" role="status">
           Claude isn&apos;t set up on this server yet. Add <code>ANTHROPIC_API_KEY</code> to the environment and restart.
         </p>
       )}
@@ -67,10 +67,12 @@ function ClaudeContent() {
       )}
 
       {error && (
-        <p className="mt-4 rounded-xl bg-danger/10 p-3 text-danger" role="alert">
+        <p className="mt-4 rounded-md bg-danger/10 p-3 text-danger" role="alert">
           {error}
         </p>
       )}
     </div>
   );
 }
+
+export default withApp(ClaudePage);

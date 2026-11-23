@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { RecipeCard } from "@/components/recipe/RecipeCard";
 import { useAsync } from "@/lib/hooks";
 import type { RecipeSource } from "@/lib/types";
@@ -15,7 +15,7 @@ const FILTERS: Array<[RecipeSource | "all" | "shared", string]> = [
   ["shared", "Shared with me"],
 ];
 
-export default function LibraryPage() {
+function LibraryPage() {
   const { repo, profile } = useApp();
   const { data: recipes, loading, error } = useAsync(() => repo.listRecipes(), [repo]);
   const [query, setQuery] = useState("");
@@ -35,30 +35,41 @@ export default function LibraryPage() {
 
   return (
     <div className="page">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="page-title">Your recipes</h1>
-          <p className="text-muted">Hi {profile.displayName}, what are we cooking?</p>
+      <section className="border-b border-border pb-8">
+        <p className="eyebrow">Hi {profile.displayName}</p>
+        <h1 className="page-title mt-2 max-w-2xl">What are we cooking today?</h1>
+        <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="relative flex-1 lg:max-w-xl">
+            <span aria-hidden className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">
+              🔍
+            </span>
+            <input
+              type="search"
+              className="input min-h-12 pl-10"
+              placeholder="Find a recipe or ingredient"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              aria-label="Search recipes"
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/claude" className="btn-primary">
+              ✨ Cook with Claude
+            </Link>
+            <Link href="/import" className="btn">
+              Import from a link
+            </Link>
+            <Link href="/recipes/new" className="btn">
+              Write a recipe
+            </Link>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Link href="/recipes/new" className="btn">
-            ✍️ Write a recipe
-          </Link>
-          <Link href="/claude" className="btn-primary">
-            ✨ Cook with Claude
-          </Link>
-        </div>
-      </div>
+      </section>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <input
-          type="search"
-          className="input sm:max-w-sm"
-          placeholder="Search recipes, ingredients, tags…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          aria-label="Search recipes"
-        />
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="section-title">
+          Your recipes {recipes && <span className="text-base font-semibold text-muted">({visible.length})</span>}
+        </h2>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter recipes">
           {FILTERS.map(([value, label]) => (
             <button key={value} className="chip" aria-pressed={filter === value} onClick={() => setFilter(value)}>
@@ -72,8 +83,8 @@ export default function LibraryPage() {
       {loading && !recipes ? (
         <p className="mt-10 text-center text-muted">Loading…</p>
       ) : visible.length === 0 ? (
-        <div className="card mt-8 p-8 text-center">
-          <p className="text-lg font-medium">{recipes?.length ? "No recipes match." : "Your recipe box is empty."}</p>
+        <div className="mt-8 rounded-md bg-surface-2 p-10 text-center">
+          <p className="text-lg font-bold">{recipes?.length ? "No recipes match." : "Your recipe box is empty."}</p>
           <p className="mt-1 text-muted">Import one from a website, write your own, or ask Claude for ideas.</p>
           <div className="mt-4 flex justify-center gap-2">
             <Link href="/import" className="btn">
@@ -85,7 +96,7 @@ export default function LibraryPage() {
           </div>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="recipe-grid">
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="recipe-grid">
           {visible.map((r) => (
             <RecipeCard key={r.id} recipe={r} shared={r.ownerId !== profile.id} />
           ))}
@@ -94,3 +105,5 @@ export default function LibraryPage() {
     </div>
   );
 }
+
+export default withApp(LibraryPage);

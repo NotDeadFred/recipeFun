@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#c2410c"/>
+  <rect width="512" height="512" rx="112" fill="#c8411b"/>
   <g fill="none" stroke="#fff7ed" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
     <!-- Pot -->
     <path d="M112 236h288v96a72 72 0 0 1-72 72H184a72 72 0 0 1-72-72z" fill="#fff7ed" fill-opacity="0.15"/>

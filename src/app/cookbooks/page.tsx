@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { useAsync } from "@/lib/hooks";
 
-export default function CookbooksPage() {
+function CookbooksPage() {
   const { repo, profile } = useApp();
   const { data, reload } = useAsync(async () => {
     const [cookbooks, groups] = await Promise.all([repo.listCookbooks(), repo.listGroups()]);
@@ -67,3 +67,5 @@ export default function CookbooksPage() {
     </div>
   );
 }
+
+export default withApp(CookbooksPage);

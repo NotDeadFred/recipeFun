@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { RecipeView } from "@/components/recipe/RecipeView";
 import { AddToCookbook } from "@/components/recipe/AddToCookbook";
 import { useAsync } from "@/lib/hooks";
 import { addToShoppingList } from "@/lib/shoppingList";
 import type { UnitSystem } from "@/lib/types";
 
-export default function RecipePage() {
+function RecipePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { repo, profile } = useApp();
@@ -86,3 +86,5 @@ export default function RecipePage() {
     </div>
   );
 }
+
+export default withApp(RecipePage);

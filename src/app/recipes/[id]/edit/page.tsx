@@ -1,12 +1,12 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { RecipeForm } from "@/components/recipe/RecipeForm";
 import { usePhotoUpload } from "@/components/recipe/usePhotoUpload";
 import { useAsync } from "@/lib/hooks";
 
-export default function EditRecipePage() {
+function EditRecipePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { bfcacheId } = router;
@@ -33,3 +33,5 @@ export default function EditRecipePage() {
     </div>
   );
 }
+
+export default withApp(EditRecipePage);

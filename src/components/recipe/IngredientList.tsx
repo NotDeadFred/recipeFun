@@ -39,7 +39,7 @@ export function IngredientList({ ingredients, highlightIds = [], checkedIds = []
             <label
               data-highlighted={highlighted}
               className={[
-                "flex cursor-pointer items-start gap-3 rounded-xl px-3 py-2 transition-colors",
+                "flex cursor-pointer items-start gap-3 rounded-md px-3 py-2 transition-colors",
                 large ? "text-lg" : "",
                 highlighted ? "bg-highlight ring-2 ring-highlight-ring" : "hover:bg-surface-2",
                 checked ? "text-muted line-through" : "",

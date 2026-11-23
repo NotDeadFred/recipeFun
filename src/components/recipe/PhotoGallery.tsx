@@ -22,10 +22,15 @@ export function PhotoGallery({ photos, title }: { photos: string[]; title: strin
   if (count === 0) return null;
 
   return (
-    <div className="w-full sm:w-64">
+    <div className="w-full">
       <button type="button" onClick={() => setOpen(0)} className="block w-full" aria-label={`View photos of ${title}`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- user photos and images from recipe sites */}
-        <img src={photos[0]} alt={title} className="aspect-[4/3] w-full rounded-2xl object-cover" referrerPolicy="no-referrer" />
+        <img
+          src={photos[0]}
+          alt={title}
+          className="aspect-[4/3] max-h-[420px] w-full rounded-md object-cover sm:aspect-[16/9]"
+          referrerPolicy="no-referrer"
+        />
       </button>
       {count > 1 && (
         <ul className="mt-2 flex gap-2 overflow-x-auto pb-1" aria-label="More photos">
@@ -33,7 +38,7 @@ export function PhotoGallery({ photos, title }: { photos: string[]; title: strin
             <li key={`${src.slice(0, 64)}-${i}`} className="shrink-0">
               <button type="button" onClick={() => setOpen(i + 1)} aria-label={`View photo ${i + 2} of ${count}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-                <img src={src} alt="" className="size-14 rounded-lg object-cover" referrerPolicy="no-referrer" loading="lazy" />
+                <img src={src} alt="" className="h-16 w-20 rounded-sm object-cover hover:opacity-80" referrerPolicy="no-referrer" loading="lazy" />
               </button>
             </li>
           ))}

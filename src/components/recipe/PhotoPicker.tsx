@@ -89,11 +89,11 @@ export function PhotoPicker({ photos, onChange, upload, max = 12 }: Props) {
             <img
               src={src}
               alt={`Photo ${i + 1}${i === 0 ? " (cover)" : ""}`}
-              className="aspect-square w-full rounded-xl border border-border object-cover"
+              className="aspect-square w-full rounded-md border border-border object-cover"
               referrerPolicy="no-referrer"
             />
             {i === 0 && (
-              <span className="absolute top-1 left-1 rounded-full bg-brand px-2 py-0.5 text-xs font-semibold text-white">Cover</span>
+              <span className="absolute top-1 left-1 rounded-sm bg-brand px-2 py-0.5 text-xs font-bold text-on-brand uppercase">Cover</span>
             )}
             <div className="mt-1 flex justify-between gap-1">
               {i > 0 ? (
@@ -112,7 +112,7 @@ export function PhotoPicker({ photos, onChange, upload, max = 12 }: Props) {
         {Array.from({ length: uploading }, (_, i) => (
           <li
             key={`uploading-${i}`}
-            className="flex aspect-square animate-pulse items-center justify-center rounded-xl bg-surface-2 text-xs text-muted"
+            className="flex aspect-square animate-pulse items-center justify-center rounded-md bg-surface-2 text-xs text-muted"
             role="status"
           >
             Uploading…

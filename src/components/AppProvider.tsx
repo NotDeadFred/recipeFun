@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, Suspense, useCallback, useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react";
 import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
 import type { Repository } from "@/lib/data/repository";
 import { LocalRepository } from "@/lib/data/localRepository";
@@ -19,12 +19,61 @@ interface AppContextValue {
   signOut: () => Promise<void>;
 }
 
-const AppContext = createContext<AppContextValue | null>(null);
+interface AppState {
+  /** Set once storage and the profile are loaded. */
+  app: AppContextValue | null;
+  /** What to show in place of page content until then (loading, sign-in, error). */
+  gate: ReactNode;
+}
 
+const AppContext = createContext<AppState>({ app: null, gate: null });
+
+/** For page content wrapped in <AppReady> / withApp(): storage and profile are ready. */
 export function useApp(): AppContextValue {
-  const ctx = useContext(AppContext);
-  if (!ctx) throw new Error("useApp must be used inside <AppProvider>");
-  return ctx;
+  const { app } = useContext(AppContext);
+  if (!app) throw new Error("useApp must be used inside <AppReady> (or a page wrapped with withApp)");
+  return app;
+}
+
+/** For UI that also renders before the app is ready (the header and nav). */
+export function useAppMaybe(): AppContextValue | null {
+  return useContext(AppContext).app;
+}
+
+/**
+ * Renders its children once the app is ready, and the loading / sign-in /
+ * error screen until then. Pages render this themselves (via withApp) rather
+ * than the layout swapping pages out, so every page segment is always
+ * rendered — which Next.js needs to validate instant navigation.
+ */
+export function AppReady({ children }: { children: ReactNode }) {
+  const { app, gate } = useContext(AppContext);
+  return <>{app ? children : gate}</>;
+}
+
+const LOADING = (
+  <div className="flex min-h-[60vh] items-center justify-center text-muted" role="status">
+    Loading your kitchen…
+  </div>
+);
+
+/**
+ * Wrap a page component so its content waits for the app to be ready.
+ * The Suspense boundary lets pages read URL data (useParams/useSearchParams)
+ * while the rest of the layout is still prerendered.
+ */
+export function withApp<P extends object>(Page: ComponentType<P>) {
+  function AppPage(props: P) {
+    return (
+      <Suspense fallback={LOADING}>
+        <AppReady>
+          <Page {...props} />
+        </AppReady>
+      </Suspense>
+    );
+  }
+  AppPage.displayName = `withApp(${Page.displayName ?? Page.name})`;
+  return AppPage;
 }
 
 let browserClient: SupabaseClient | null = null;
@@ -106,8 +155,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await supabase?.auth.signOut();
   }, [supabase]);
 
+  let gate: ReactNode = LOADING;
   if (error) {
-    return (
+    gate = (
       <div className="mx-auto max-w-md p-8 text-center">
         <h1 className="text-xl font-semibold">Couldn&apos;t load your data</h1>
         <p className="mt-2 text-muted">{error}</p>
@@ -116,29 +166,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         </button>
       </div>
     );
-  }
-  if (supabase && authReady && !session) return <SignInScreen supabase={supabase} />;
-  if (!repo || !profile) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center text-muted" role="status">
-        Loading your kitchen…
-      </div>
-    );
+  } else if (supabase && authReady && !session) {
+    gate = <SignInScreen supabase={supabase} />;
   }
 
-  return (
-    <AppContext.Provider
-      value={{
-        repo,
-        profile,
-        refreshProfile,
-        mode: repo.mode,
-        claudeEnabled,
-        apiFetch,
-        signOut,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
+  const app: AppContextValue | null =
+    repo && profile && !error
+      ? { repo, profile, refreshProfile, mode: repo.mode, claudeEnabled, apiFetch, signOut }
+      : null;
+
+  // Always render children (the layout and page); pages show `gate` until ready.
+  return <AppContext.Provider value={{ app, gate }}>{children}</AppContext.Provider>;
 }

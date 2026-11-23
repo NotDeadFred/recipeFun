@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { useAsync } from "@/lib/hooks";
 
-export default function GroupPage() {
+function GroupPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { repo, profile } = useApp();
@@ -92,3 +92,5 @@ export default function GroupPage() {
     </div>
   );
 }
+
+export default withApp(GroupPage);

@@ -1,37 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #fbf7f2;
+/*
+ * RecipeFun theme: clean, editorial recipe-site look. White pages, bold dark
+ * headings, small uppercase labels, one warm paprika accent, food photos up
+ * front, thin rules instead of heavy shadows.
+ *
+ * Light is the default. Dark applies when <html data-theme="dark"> (set by the
+ * theme toggle, and before first paint by the inline script in layout.tsx).
+ */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --background: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f3ece3;
-  --foreground: #2b2118;
-  --muted: #7a6a5c;
-  --border: #e6dbcf;
-  --brand: #c2410c;
-  --brand-strong: #9a3412;
-  --brand-soft: #ffedd5;
-  --highlight: #fef3c7;
-  --highlight-ring: #f59e0b;
-  --success: #15803d;
-  --danger: #b91c1c;
+  --surface-2: #f6f4f1;
+  --foreground: #1c1b1a;
+  --muted: #5f5b57;
+  --border: #e4e0db;
+  --brand: #c8411b;
+  --brand-strong: #9f3112;
+  --brand-soft: #fcebe5;
+  --on-brand: #ffffff;
+  --highlight: #fff3c4;
+  --highlight-ring: #e0a100;
+  --success: #2e7d32;
+  --danger: #b3261e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #17120e;
-    --surface: #221b15;
-    --surface-2: #2c231c;
-    --foreground: #f5ede4;
-    --muted: #b3a294;
-    --border: #3d3229;
-    --brand: #fb923c;
-    --brand-strong: #fdba74;
-    --brand-soft: #431407;
-    --highlight: #3b2a0a;
-    --highlight-ring: #f59e0b;
-    --success: #4ade80;
-    --danger: #f87171;
-  }
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #141312;
+  --surface: #1d1b1a;
+  --surface-2: #272422;
+  --foreground: #f3efea;
+  --muted: #b2aaa2;
+  --border: #393431;
+  --brand: #ff7b52;
+  --brand-strong: #ffa385;
+  --brand-soft: #3d1c12;
+  --on-brand: #1c0d07;
+  --highlight: #3a2f0c;
+  --highlight-ring: #f0b429;
+  --success: #6fcf73;
+  --danger: #ff8a80;
 }
 
 @theme inline {
@@ -44,6 +55,7 @@
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
   --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
   --color-highlight: var(--highlight);
   --color-highlight-ring: var(--highlight-ring);
   --color-success: var(--success);
@@ -65,37 +77,50 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-border bg-surface shadow-sm;
+    @apply rounded-md border border-border bg-surface;
+  }
+  .card-hover {
+    @apply transition-shadow hover:shadow-[0_6px_20px_-8px_rgb(0_0_0/0.25)];
+  }
+  /* Small uppercase label above titles and on cards ("DINNER · ITALIAN"). */
+  .eyebrow {
+    @apply text-xs font-bold tracking-[0.12em] text-brand uppercase;
+  }
+  .rule {
+    @apply border-t border-border;
   }
   .btn {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 font-medium transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold transition-colors hover:border-foreground/40 hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2 font-semibold text-white transition-colors hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand px-5 py-2 text-sm font-bold tracking-wide text-on-brand uppercase transition-colors hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-ghost {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2 font-medium text-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-brand;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-brand;
   }
   .field {
-    @apply flex flex-col gap-1 text-sm font-medium;
+    @apply flex flex-col gap-1.5 text-sm font-semibold;
   }
   .field input,
   .field textarea,
   .field select,
   .input {
-    @apply min-h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-base font-normal text-foreground placeholder:text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30;
+    @apply min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base font-normal text-foreground placeholder:text-muted focus:border-brand focus:ring-2 focus:ring-brand/25 focus:outline-none;
   }
   .chip {
-    @apply inline-flex min-h-9 items-center gap-1 rounded-full border border-border bg-surface px-3 text-sm;
+    @apply inline-flex min-h-9 items-center gap-1 rounded-full border border-border bg-surface px-3.5 text-sm font-medium hover:border-foreground/40;
   }
   .chip[aria-pressed="true"] {
-    @apply border-brand bg-brand-soft font-semibold text-brand-strong;
+    @apply border-brand bg-brand text-on-brand;
   }
   .page {
-    @apply mx-auto w-full max-w-6xl px-4 py-6 sm:px-6;
+    @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6;
   }
   .page-title {
-    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+    @apply text-3xl font-extrabold tracking-tight sm:text-4xl;
+  }
+  .section-title {
+    @apply text-xl font-extrabold tracking-tight;
   }
 }
 

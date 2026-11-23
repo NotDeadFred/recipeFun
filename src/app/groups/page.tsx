@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { useApp } from "@/components/AppProvider";
+import { useApp, withApp } from "@/components/AppProvider";
 import { useAsync } from "@/lib/hooks";
 
-export default function GroupsPage() {
+function GroupsPage() {
   const { repo, mode } = useApp();
   const { data: groups, reload } = useAsync(() => repo.listGroups(), [repo]);
   const [name, setName] = useState("");
@@ -37,7 +37,7 @@ export default function GroupsPage() {
       <h1 className="page-title">Groups</h1>
       <p className="mt-1 text-muted">Make a group for your family or friends, share the invite code, then share cookbooks with the group.</p>
       {mode === "local" && (
-        <p className="mt-4 rounded-xl bg-highlight p-3 text-sm" role="status">
+        <p className="mt-4 rounded-md bg-highlight p-3 text-sm" role="status">
           You&apos;re in local mode, so groups live only on this device. Connect Supabase (see the README) to invite other people.
         </p>
       )}
@@ -77,3 +77,5 @@ export default function GroupsPage() {
     </div>
   );
 }
+
+export default withApp(GroupsPage);
