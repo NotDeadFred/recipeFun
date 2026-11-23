@@ -59,3 +59,21 @@ describe("LocalRepository", () => {
     expect((await new LocalRepository(localStorage).listRecipes()).length).toBeGreaterThan(0);
   });
 });
+
+describe("LocalRepository photos", () => {
+  it("stores photos inline as data URLs", async () => {
+    const repo = new LocalRepository(localStorage);
+    const url = await repo.uploadPhoto(new Blob(["fake"], { type: "image/jpeg" }));
+    expect(url).toMatch(/^data:image\/jpeg;base64,/);
+  });
+
+  it("explains when device storage is full", async () => {
+    const full = {
+      getItem: () => null,
+      setItem: () => {
+        throw new DOMException("full", "QuotaExceededError");
+      },
+    } as unknown as Storage;
+    await expect(new LocalRepository(full).listRecipes()).rejects.toThrow(/storage is full/);
+  });
+});

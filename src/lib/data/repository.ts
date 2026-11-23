@@ -24,6 +24,8 @@ export interface Repository {
   getRecipe(id: string): Promise<Recipe | null>;
   saveRecipe(recipe: RecipeDraft | Recipe): Promise<Recipe>;
   deleteRecipe(id: string): Promise<void>;
+  /** Store a (already resized) photo and return a URL that can be shown in <img>. */
+  uploadPhoto(photo: Blob): Promise<string>;
 
   listCookbooks(): Promise<Cookbook[]>;
   getCookbook(id: string): Promise<Cookbook | null>;

@@ -2,18 +2,21 @@
 
 import { useState, type FormEvent } from "react";
 import type { Recipe, RecipeDraft } from "@/lib/types";
-import { buildRecipeDraft, parseSectionedText, toSectionedText } from "@/lib/recipeBuilder";
+import { buildRecipeDraft, parseSectionedText, recipePhotos, toSectionedText } from "@/lib/recipeBuilder";
+import { PhotoPicker } from "./PhotoPicker";
 
 interface Props {
   initial?: Recipe | RecipeDraft | null;
   submitLabel?: string;
   onSubmit: (draft: RecipeDraft) => Promise<void> | void;
   onCancel?: () => void;
+  /** Stores a picked photo file and returns its URL. */
+  uploadPhoto?: (file: File) => Promise<string>;
 }
 
 const num = (v: string) => (v.trim() === "" ? null : Math.max(0, Number(v)));
 
-export function RecipeForm({ initial, submitLabel = "Save recipe", onSubmit, onCancel }: Props) {
+export function RecipeForm({ initial, submitLabel = "Save recipe", onSubmit, onCancel, uploadPhoto }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [servings, setServings] = useState(String(initial?.servings ?? 4));
@@ -21,7 +24,7 @@ export function RecipeForm({ initial, submitLabel = "Save recipe", onSubmit, onC
   const [cook, setCook] = useState(initial?.cookMinutes?.toString() ?? "");
   const [cuisine, setCuisine] = useState(initial?.cuisine ?? "");
   const [tags, setTags] = useState(initial?.tags.join(", ") ?? "");
-  const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? "");
+  const [photos, setPhotos] = useState<string[]>(initial ? recipePhotos(initial) : []);
   const [ingredients, setIngredients] = useState(
     initial ? toSectionedText(initial.ingredients.map((i) => ({ text: i.raw || i.name, group: i.group }))) : "",
   );
@@ -42,7 +45,7 @@ export function RecipeForm({ initial, submitLabel = "Save recipe", onSubmit, onC
       const draft = buildRecipeDraft({
         title,
         description: description || null,
-        imageUrl: imageUrl || null,
+        photos,
         sourceType: initial?.sourceType ?? "manual",
         sourceUrl: initial?.sourceUrl ?? null,
         sourceName: initial?.sourceName ?? null,
@@ -96,16 +99,11 @@ export function RecipeForm({ initial, submitLabel = "Save recipe", onSubmit, onC
           <input value={cuisine} onChange={(e) => setCuisine(e.target.value)} placeholder="Italian" />
         </label>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="field">
-          <span>Tags (comma separated)</span>
-          <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="dinner, freezer-friendly" />
-        </label>
-        <label className="field">
-          <span>Photo URL</span>
-          <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://…" />
-        </label>
-      </div>
+      <label className="field">
+        <span>Tags (comma separated)</span>
+        <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="dinner, freezer-friendly" />
+      </label>
+      <PhotoPicker photos={photos} onChange={setPhotos} upload={uploadPhoto} />
       <div className="grid gap-4 md:grid-cols-2">
         <label className="field">
           <span>Ingredients — one per line</span>

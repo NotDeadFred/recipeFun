@@ -48,8 +48,11 @@ export class LocalRepository implements Repository {
   private write(db: LocalDb) {
     try {
       this.storage.setItem(KEY, JSON.stringify(db));
-    } catch {
-      /* private mode or quota: keep working in memory for this call */
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "QuotaExceededError") {
+        throw new Error("This device's storage is full. Remove some photos, or connect Supabase to store photos online.");
+      }
+      /* private mode: keep working in memory for this call */
     }
   }
 
@@ -97,6 +100,19 @@ export class LocalRepository implements Repository {
     this.update((db) => {
       db.recipes = db.recipes.filter((r) => r.id !== id);
       db.cookbooks.forEach((c) => (c.recipeIds = c.recipeIds.filter((r) => r !== id)));
+    });
+  }
+
+  /**
+   * Local mode has no file storage, so photos are kept inline as data URLs.
+   * Browser storage is limited (about 5 MB), so the form resizes photos small.
+   */
+  async uploadPhoto(photo: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error("Couldn't read that photo."));
+      reader.readAsDataURL(photo);
     });
   }
 

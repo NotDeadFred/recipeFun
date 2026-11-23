@@ -16,6 +16,7 @@ function rowToRecipe(r: any): Recipe {
     title: r.title,
     description: r.description,
     imageUrl: r.image_url,
+    photos: r.photos ?? (r.image_url ? [r.image_url] : []),
     sourceType: r.source_type,
     sourceUrl: r.source_url,
     sourceName: r.source_name,
@@ -37,7 +38,8 @@ function recipeToRow(r: RecipeDraft | Recipe) {
   return {
     title: r.title,
     description: r.description ?? null,
-    image_url: r.imageUrl ?? null,
+    image_url: r.photos?.[0] ?? r.imageUrl ?? null,
+    photos: r.photos ?? (r.imageUrl ? [r.imageUrl] : []),
     source_type: r.sourceType,
     source_url: r.sourceUrl ?? null,
     source_name: r.sourceName ?? null,
@@ -112,6 +114,16 @@ export class SupabaseRepository implements Repository {
 
   async deleteRecipe(id: string) {
     check(await this.db.from("recipes").delete().eq("id", id));
+  }
+
+  async uploadPhoto(photo: Blob): Promise<string> {
+    const ext = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
+    const path = `${this.userId}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await this.db.storage
+      .from("recipe-photos")
+      .upload(path, photo, { contentType: photo.type || "image/jpeg", cacheControl: "31536000" });
+    if (error) throw new Error(`Photo upload failed: ${error.message}`);
+    return this.db.storage.from("recipe-photos").getPublicUrl(path).data.publicUrl;
   }
 
   async listCookbooks() {

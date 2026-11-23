@@ -30,7 +30,10 @@ export interface Recipe {
   ownerId: string;
   title: string;
   description?: string | null;
+  /** Cover photo (same as photos[0] when there are photos). */
   imageUrl?: string | null;
+  /** All photos in display order; the first is the cover. */
+  photos?: string[];
   sourceType: RecipeSource;
   sourceUrl?: string | null;
   sourceName?: string | null;

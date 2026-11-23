@@ -7,6 +7,7 @@ export interface LooseRecipeInput {
   title: string;
   description?: string | null;
   imageUrl?: string | null;
+  photos?: string[];
   sourceType: RecipeSource;
   sourceUrl?: string | null;
   sourceName?: string | null;
@@ -52,7 +53,8 @@ export function buildRecipeDraft(input: LooseRecipeInput): RecipeDraft {
   return {
     title: input.title.trim() || "Untitled recipe",
     description: input.description ?? null,
-    imageUrl: input.imageUrl ?? null,
+    imageUrl: input.photos?.[0] ?? input.imageUrl ?? null,
+    photos: input.photos ?? (input.imageUrl ? [input.imageUrl] : []),
     sourceType: input.sourceType,
     sourceUrl: input.sourceUrl ?? null,
     sourceName: input.sourceName ?? null,
@@ -115,4 +117,10 @@ export function relinkSteps(steps: Step[], ingredients: Ingredient[]): Step[] {
     ingredientIds: linkIngredientsToStep(s.text, ingredients),
     timerSeconds: primaryTimerSeconds(s.text),
   }));
+}
+
+/** A recipe's photos in order, including older recipes that only have a cover. */
+export function recipePhotos(recipe: { photos?: string[]; imageUrl?: string | null }): string[] {
+  if (recipe.photos && recipe.photos.length > 0) return recipe.photos;
+  return recipe.imageUrl ? [recipe.imageUrl] : [];
 }

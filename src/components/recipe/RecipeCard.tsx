@@ -2,15 +2,17 @@ import Link from "next/link";
 import type { Recipe } from "@/lib/types";
 import { formatMinutes } from "@/lib/timers";
 import { SOURCE_LABEL } from "./RecipeView";
+import { recipePhotos } from "@/lib/recipeBuilder";
 
 const SOURCE_EMOJI: Record<string, string> = { imported: "🌐", manual: "✍️", claude: "✨" };
 
 export function RecipeCard({ recipe, shared }: { recipe: Recipe; shared?: boolean }) {
+  const cover = recipePhotos(recipe)[0];
   return (
     <Link href={`/recipes/${recipe.id}`} className="card group flex flex-col overflow-hidden transition-shadow hover:shadow-md">
-      {recipe.imageUrl ? (
+      {cover ? (
         // eslint-disable-next-line @next/next/no-img-element -- images come from arbitrary recipe sites
-        <img src={recipe.imageUrl} alt="" className="aspect-[4/3] w-full object-cover" referrerPolicy="no-referrer" loading="lazy" />
+        <img src={cover} alt="" className="aspect-[4/3] w-full object-cover" referrerPolicy="no-referrer" loading="lazy" />
       ) : (
         <div className="flex aspect-[4/3] w-full items-center justify-center bg-surface-2 text-5xl" aria-hidden>
           {SOURCE_EMOJI[recipe.sourceType]}

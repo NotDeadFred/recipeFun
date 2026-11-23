@@ -10,6 +10,7 @@ A recipe and cooking app for the web and iPad. Collect recipes from your favorit
   - **One-tap bookmarklet** to import whatever recipe page you're on.
   - **Saved sites**: keep a list of your favorite recipe sites and search them all from one box.
   - **Write your own** with a simple form (one ingredient/step per line, `# Heading` for sections).
+- **Photos of the dish**: add several pictures to any recipe from the camera or photo library (or by link), and pick which one is the cover. Photos are resized on the device before saving, which also strips location data. Tap a photo on the recipe page to view it full screen.
 - **✨ Cooking with Claude**: pick ingredients you have, a flavor profile, cuisine, dietary needs, time limit and skill level, and Claude writes an original recipe you can save, edit and cook.
 - **Split-view recipe page**: ingredients beside steps. Tap a step to highlight the ingredients it uses. Scale servings and switch between as-written, US and metric units.
 - **Cook mode** (step-by-step walkthrough)
@@ -48,7 +49,7 @@ To turn on Claude and accounts, copy `.env.example` to `.env.local` and fill in 
 ### Set up Supabase (accounts, groups, sharing)
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run [`supabase/migrations/20261122000000_init.sql`](supabase/migrations/20261122000000_init.sql). Or, with the Supabase CLI: `supabase link` then `supabase db push`.
+2. In the SQL editor, run each file in [`supabase/migrations/`](supabase/migrations) in order. Or, with the Supabase CLI: `supabase link` then `supabase db push`. This creates the tables, the access rules, and a `recipe-photos` storage bucket.
 3. Copy the project URL and anon key (Project Settings → API) into `.env.local`.
 4. Under Authentication → URL Configuration, add your site URL (for example `http://localhost:3000`, plus your deployed URL).
 
@@ -58,6 +59,7 @@ Access rules live in the database as row-level security policies:
 - Members of a group can see cookbooks shared with that group, and the recipes in them (read-only).
 - Any member can add their recipes to a shared cookbook; only the owner can rename, unshare or delete it.
 - Groups are joined by invite code, through a database function, so nobody can list other people's groups.
+- Uploaded photos go in each user's own folder in the `recipe-photos` bucket. The bucket is public-read so photos load quickly and work in shared cookbooks, but file names are random and can't be listed.
 
 ### Set up Claude
 
@@ -110,6 +112,8 @@ e2e/              Playwright tests
 ```
 
 ## Notes
+
+- In local mode, photos are stored in the browser (about 5 MB in total, so roughly 20–30 photos). Connect Supabase to store them online without that limit.
 
 - Imported recipes are for personal use. Each keeps a link to its source; please respect each site's terms.
 - Some sites block automated requests. When that happens, use **Paste text** or the bookmarklet.

@@ -6,6 +6,8 @@ import { adjustIngredients } from "@/lib/scaling";
 import { formatClock, formatMinutes } from "@/lib/timers";
 import { IngredientList } from "./IngredientList";
 import { ServingsControl, UnitToggle } from "./ServingsControl";
+import { PhotoGallery } from "./PhotoGallery";
+import { recipePhotos } from "@/lib/recipeBuilder";
 
 export const SOURCE_LABEL: Record<string, string> = {
   imported: "Imported",
@@ -44,15 +46,7 @@ export function RecipeView({ recipe, actions, servings, onServingsChange, unitSy
   return (
     <article>
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        {recipe.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element -- images come from arbitrary recipe sites
-          <img
-            src={recipe.imageUrl}
-            alt=""
-            className="aspect-[4/3] w-full rounded-2xl object-cover sm:w-64"
-            referrerPolicy="no-referrer"
-          />
-        )}
+        <PhotoGallery photos={recipePhotos(recipe)} title={recipe.title} />
         <div className="flex-1">
           <p className="text-sm font-medium text-brand">
             {SOURCE_LABEL[recipe.sourceType]}

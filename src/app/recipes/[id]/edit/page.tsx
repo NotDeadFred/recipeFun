@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useApp } from "@/components/AppProvider";
 import { RecipeForm } from "@/components/recipe/RecipeForm";
+import { usePhotoUpload } from "@/components/recipe/usePhotoUpload";
 import { useAsync } from "@/lib/hooks";
 
 export default function EditRecipePage() {
@@ -10,6 +11,7 @@ export default function EditRecipePage() {
   const router = useRouter();
   const { bfcacheId } = router;
   const { repo } = useApp();
+  const uploadPhoto = usePhotoUpload();
   const { data: recipe, loading } = useAsync(() => repo.getRecipe(id), [repo, id]);
 
   if (loading) return <p className="page text-muted">Loading…</p>;
@@ -21,6 +23,7 @@ export default function EditRecipePage() {
       <RecipeForm
         key={`${bfcacheId}-${recipe.updatedAt}`}
         initial={recipe}
+        uploadPhoto={uploadPhoto}
         onCancel={() => router.back()}
         onSubmit={async (draft) => {
           const saved = await repo.saveRecipe({ ...recipe, ...draft, id: recipe.id });

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { RecipeForm } from "@/components/recipe/RecipeForm";
+import { usePhotoUpload } from "@/components/recipe/usePhotoUpload";
 import { takePendingDraft } from "@/lib/draftStore";
 
 export default function NewRecipePage() {
@@ -15,6 +16,7 @@ export default function NewRecipePage() {
 function NewRecipe() {
   const router = useRouter();
   const { repo } = useApp();
+  const uploadPhoto = usePhotoUpload();
   // A draft handed over from import or Claude ("Edit before saving").
   const [initial] = useState(() => (typeof window === "undefined" ? null : takePendingDraft()));
 
@@ -26,6 +28,7 @@ function NewRecipe() {
       </p>
       <RecipeForm
         initial={initial}
+        uploadPhoto={uploadPhoto}
         onCancel={() => router.back()}
         onSubmit={async (draft) => {
           const saved = await repo.saveRecipe(draft);
